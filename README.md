@@ -110,3 +110,24 @@ dmesg | tail -5     # should show "tempsensor: module unloaded"
 - Add a class diagram covering `TempReader`, `StateMachine`, `Logger` as
   separate C++ classes instead of one flat `main()`.
 - Add unit tests for the `classify()` state-transition logic.
+
+## Demo Results
+
+The driver was built, loaded, and tested end-to-end in an Ubuntu 20.04 VM.
+
+**1. Driver build and load**
+`make` compiled `tempsensor.ko` successfully, `insmod` loaded it, and
+`lsmod` confirmed it was active in the kernel.
+![Driver build and insmod](demo/05-driver-build-insmod.png)
+
+**2. Monitoring app running in NORMAL state**
+The C++ app reads `/dev/tempsensor` once a second and correctly reports
+the NORMAL state as the simulated temperature drifts.
+![Monitoring running](demo/02-monitoring-running.png)
+
+**3. State transitions with accelerated drift**
+Using `--drift 40`, the state machine correctly cycles through
+NORMAL → WARNING → CRITICAL as the simulated sensor value crosses the
+60°C and 80°C thresholds.
+![Critical transitions](demo/03-critical-transitions.png)
+![Drift 400 demo](demo/04-drift-400-demo.png)
